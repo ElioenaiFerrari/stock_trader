@@ -13,15 +13,18 @@
     <v-card>
       <v-container fill-height>
         <v-text-field
+          :error="isInvalidSale || !Number.isInteger(quantity)"
           v-model.number="quantity"
           label="Quantidade"
           type="number"
         />
         <v-btn
           @click="sellStock"
-          :disabled="quantity <= 0 || !Number.isInteger(quantity)"
+          :disabled="
+            quantity <= 0 || isInvalidSale || !Number.isInteger(quantity)
+          "
           class="blue darken-3 white--text"
-          >Vender</v-btn
+          >{{ isInvalidSale ? 'Insuficiente' : 'Vender' }}</v-btn
         >
       </v-container>
     </v-card>
@@ -36,6 +39,13 @@ export default {
       quantity: 0,
     };
   },
+
+  computed: {
+    isInvalidSale() {
+      return this.quantity > this.stock.quantity;
+    },
+  },
+
   methods: {
     sellStock() {
       const order = {
